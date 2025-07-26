@@ -38,7 +38,7 @@ const Dashboard = () => {
   return (
     <Container fluid className="py-4 bg-dark min-vh-100">
       <Card className="p-4 shadow-sm rounded-3 bg-secondary text-light">
-        <h2 className="mb-4 text-center text-white">Personal Expense Tracker</h2>
+        <h2 className="mb-4 text-center text-white">PERSONAL EXPENSE TRACKER</h2>
 
         {/* Summary */}
         <Row className="mb-4 text-center g-3">
