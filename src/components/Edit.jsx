@@ -8,39 +8,46 @@ import {
 } from 'react-bootstrap';
 import { FiEdit } from "react-icons/fi";
 import { updateTransactionAPI } from '../service/allApi';
+import { toast } from 'react-toastify'; // ✅ Import toast
 
-function Edit({ trans, setEditTransResult}) {
+function Edit({ trans, setEditTransResult }) {
   const [show, setShow] = useState(false);
+  const [editedData, setEditedData] = useState({ ...trans });
+
   const handleClose = () => setShow(false);
   const handleShow = () => {
     setEditedData(trans); // reset data on modal open
     setShow(true);
   };
 
-  const [editedData, setEditedData] = useState({ ...trans });
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setEditedData({ ...editedData, [name]: value });
   };
 
-  const handleCancel = async () => {
-    setEditedData({...trans})
+  const handleCancel = () => {
+    setEditedData({ ...trans });
+    setShow(false); // close on cancel
   };
 
-  const handleSave = async ()=>{
-    const {type, category, description, amount, date} = editedData
-    console.log(type, category, description, amount, date);
-    if(!type || !category || !description || !amount || !date){
-      alert(`Fill the form Completely`)
-    }else{
-      const result = await updateTransactionAPI(trans.id, editedData)
-      console.log(result);
-      setEditTransResult(prev => !prev)
-      alert(`Transaction Upated Successfully`)
-      handleClose()
+  const handleSave = async () => {
+    const { type, category, description, amount, date } = editedData;
+
+    if (!type || !category || !description || !amount || !date) {
+      toast.warning('Please fill out all the fields!');
+    } else {
+      try {
+        const result = await updateTransactionAPI(trans.id, editedData);
+        console.log(result);
+        setEditTransResult(prev => !prev);
+        toast.success('Transaction updated successfully!');
+        handleClose();
+      } catch (err) {
+        console.error(err);
+        toast.error('Failed to update transaction!');
+      }
     }
-  }
+  };
 
   return (
     <>

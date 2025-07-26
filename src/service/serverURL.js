@@ -1,1 +1,1 @@
-export const serverURL = "http://localhost:4000"
+export const serverURL = "https://expense-tracker-backend-ug2g.onrender.com"

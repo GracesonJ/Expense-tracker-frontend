@@ -7,6 +7,8 @@ import {
   Button,
 } from 'react-bootstrap';
 import { addTransactionAPI } from '../service/allApi';
+import { toast } from 'react-toastify'; // ✅ import toast
+import 'react-toastify/dist/ReactToastify.css'; // ✅ import CSS once (usually in App.jsx)
 
 function Add({ setAddTransResult }) {
   const [transactions, setTransactions] = useState({
@@ -16,8 +18,6 @@ function Add({ setAddTransResult }) {
     description: '',
     date: ''
   });
-  console.log(transactions);
-
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -26,23 +26,30 @@ function Add({ setAddTransResult }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { type, category, amount, description, date } = transactions
-    console.log(type, category, amount, description, date);
+    const { type, category, amount, description, date } = transactions;
 
     if (!type || !category || !amount || !description || !date) {
-      alert(`Fill the form Completely`)
+      toast.error('Please fill in all fields!', { autoClose: 3000 });
     } else {
-      const result = await addTransactionAPI(transactions)
-      console.log(result);
-      setAddTransResult(prev => !prev)
-      alert(`Transaction Added Successfully`)
-      setTransactions({
-        type: '',
-        category: '',
-        amount: '',
-        description: '',
-        date: ''
-      });
+      try {
+        const result = await addTransactionAPI(transactions);
+        if (result.status === 201 || result.status === 200) {
+          toast.success('Transaction added successfully!', { autoClose: 3000 });
+          setAddTransResult(prev => !prev);
+          setTransactions({
+            type: '',
+            category: '',
+            amount: '',
+            description: '',
+            date: ''
+          });
+        } else {
+          toast.warning('Failed to add transaction. Try again!', { autoClose: 3000 });
+        }
+      } catch (error) {
+        toast.error('Something went wrong!', { autoClose: 3000 });
+        console.error(error);
+      }
     }
   };
 
